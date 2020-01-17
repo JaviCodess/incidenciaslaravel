@@ -16,11 +16,6 @@
                     @foreach ($incidencia as $item)
                         <h2>Comentario del administrador:</h2>
                         <p>{{$item->informacion}}</p><br>
-                        @if($item->archivo=="")
-                            <h1>No hay archivo adjuntado</h1>
-                        @else
-                            <iframe src="{!! asset($item->archivo)!!}"></iframe>
-                        @endif
                         
                     @endforeach
                 </div>

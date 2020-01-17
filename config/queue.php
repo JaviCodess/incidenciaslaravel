@@ -43,7 +43,7 @@ return [
 
         'beanstalkd' => [
             'driver' => 'beanstalkd',
-            'host' => '10.10.17.223.xip.io',
+            'host' => 'localhost',
             'queue' => 'default',
             'retry_after' => 90,
             'block_for' => 0,

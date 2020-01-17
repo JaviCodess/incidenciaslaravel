@@ -17,6 +17,7 @@
         }
     </style>
     <body>
+    <h2>EL PROFESOR CON EL ID {{ $incidencia['profesorId'] }} HA CREADO LA SIGUIENTE INCIDENCIA:</h2>
     <div class="container">
             <table border="1px solid black">
                     <tr>
@@ -25,7 +26,7 @@
                         <th>Hora</th>
                         <th>Código del equipo</th>
                         <th>Código de la incidencia</th>
-                        <td>ID del profesor</td>
+                        <th>ID del profesor</th>
                     </tr>
                     <tr>
                         <td>{{ $incidencia['fecha'] }}</td>

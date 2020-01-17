@@ -20,14 +20,16 @@ class ControladorIncidencia extends Controller
     protected function validator(Request $request)
     {
         $validator=Validator::make($request->all(), [
-            'fecha' => ['required'],
+            'fecha' => 'required|date_format:Y-m-d',
             'aula' => ['required', 'regex:/(\d\d\d)/'],
-            'hora' => ['required'],
+            'hora' => ['required', 'date_format:H:i'],
             'equipo' => ['required','regex:/(\d\d\d\d\d\d)/'],
-            'inc' => ['required']
+            'inc' => ['required', 'numeric', 'regex:/(\d)/']
         ],[
-            'required' => 'El :attribute es obligatorio.',
-            'regex' => 'El formato de :attribute no es correcto',
+            'required' => 'El campo de :attribute es obligatorio.',
+            'regex' => 'El formato del campo :attribute no es correcto',
+            'inc.required' => 'El campo de la incidencia es obligatorio.',
+            'inc.regex' => 'El formato del campo la incidencia no es correcto',
         ]);
         if($validator->fails()){
             return redirect()->back()->withErrors($validator);
@@ -42,8 +44,14 @@ class ControladorIncidencia extends Controller
             $incidencia->profesorId = $request->idp;
             $incidencia->save();
                 
-            Mail::to(User::findOrFail(1))->send(new SendMail($incidencia, $incidencia->id));
-     
+            $data = array('incidencia' => $incidencia);
+            Mail::send('email', $data, function ($message){
+                $message->from('sanchezfjaviersanchez@plaiaundi.net', 'Incidencia creada');
+                $datos=User::select('email')->where('admin', 1)->get();
+                foreach($datos as $email){
+                    $message->to($email->email)->subject('Incidencia Añadida');
+                }
+            });
             
             return redirect('/home');
         }
@@ -57,14 +65,18 @@ class ControladorIncidencia extends Controller
     }
     protected function modIncidencia(Request $request, $i){
         $validator=Validator::make($request->all(), [
-            'fecha' => ['required'],
+            'fecha' => ['required','date_format: d/m/Y'],
             'aula' => ['required', 'regex:/(\d\d\d)/'],
-            'hora' => ['required'],
+            'hora' => ['required', 'date_format:H:i'],
             'equipo' => ['required','regex:/(\d\d\d\d\d\d)/'],
-            'inc' => ['required']
+            'inc' => ['required', 'numeric', 'regex:/(\d)/']
         ],[
-            'required' => 'El :attribute es obligatorio.',
-            'regex' => 'El formato de :attribute no es correcto',
+            'required' => 'El campo de :attribute es obligatorio.',
+            'regex' => 'El formato del campo :attribute no es correcto',
+            'fecha.date_format' => 'El formato de fecha es dd/mm/aa',
+            'hora.date_format' => 'El formato de hora es hh:mm',
+            'inc.required' => 'El campo de la incidencia es obligatorio.',
+            'inc.regex' => 'El formato del campo la incidencia no es correcto',
         ]);
         if($validator->fails()){
             return redirect()->back()->withErrors($validator);
@@ -101,16 +113,18 @@ class ControladorIncidencia extends Controller
     protected function actualizarAnadir(Request $request, $i){
         $validator=Validator::make($request->all(), [
             'estado' => ['required'],
-            'comentario' => ['required']
+            'comentario' => ['required'],
+        ],[
+            'required' => 'El campo de :attribute es obligatorio.',
+            
         ]);
         if($validator->fails()){
-            return back();
+            return redirect()->back()->withErrors($validator);
         }else{
 
             $incidencia = Incidencia::findOrFail($i);
             $incidencia->estado = $request->estado;
             $incidencia->informacion = $request->comentario;
-            $incidencia->archivo = $request->adjun;
             
             $incidencia->update();
                 

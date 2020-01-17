@@ -19,7 +19,7 @@
                         </div>
                     @endif
                         @foreach ($incidencia as $item)
-                        <form method="POST" action="/home-admin/anadir/{{$item->id}}/modificado">
+                        <form method="POST" enctype="multipart/form-data" action="/home-admin/anadir/{{$item->id}}/modificado">
                             @csrf
                             Estado de la incidencia: <select name="estado">
                                 <option value="En proceso">En proceso</option>
@@ -30,11 +30,21 @@
                             Comentario:
                             <br>
                             <textarea name="comentario" rows="10" cols="50"></textarea><br>
-                            Adjunta archivo: <input type="file" name="adjun">
-                            <input type="string" name="idp" value="{{Auth::user()->id}}" style="display:none;"><br>
+                            
                             <input type="submit" value="Enviar">
                         </form>
                         @endforeach
+                        @if(count($errors))
+                            <div class="errors">
+                                <div class="alert alert-danger" role="alert">
+                                    @foreach($errors->all() as $message)
+                                    <ul>
+                                        <li>{{ $message }} </li>
+                                    </ul>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
                 </div>
             </div>
         </div>
