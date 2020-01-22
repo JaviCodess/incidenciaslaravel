@@ -29,7 +29,17 @@
                             <input type="submit" value="Enviar">
                         </form>
                         @endforeach
-                        
+                        @if(count($errors))
+                            <div class="errors">
+                                <div class="alert alert-danger" role="alert">
+                                    @foreach($errors->all() as $message)
+                                    <ul>
+                                        <li>{{ $message }} </li>
+                                    </ul>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
                 </div>
             </div>
             <br>

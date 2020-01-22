@@ -68,7 +68,9 @@ class LoginController extends Controller
         }
         // permitir solo usuarios con @plaiaundi.net
         if(explode("@", $user->email)[1] !== 'plaiaundi.net'){
-            return view('error');
+            if(explode("@", $user->email)[1] !== 'plaiaundi.com'){
+                return view('error');
+            }
         }
         // checkean si el usuario existe
         $existingUser = User::where('email', $user->email)->first();

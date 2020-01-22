@@ -60,12 +60,14 @@ class ControladorIncidencia extends Controller
     }
     
     protected function modvistaIncidencia(Request $request, $i){
+        $datos = Incidencia::find($i);
+        $this->authorize('view',$datos);
         $incidencia = Incidencia::select('id', 'fecha', 'aula', 'hora', 'codigo_equipo', 'codigo_incidencia')->where('id', $i)->get();
         return view('mod_incidencia')->with('incidencia',$incidencia);
     }
     protected function modIncidencia(Request $request, $i){
         $validator=Validator::make($request->all(), [
-            'fecha' => ['required','date_format: d/m/Y'],
+            'fecha' => ['required','date_format:Y-m-d'],
             'aula' => ['required', 'regex:/(\d\d\d)/'],
             'hora' => ['required', 'date_format:H:i'],
             'equipo' => ['required','regex:/(\d\d\d\d\d\d)/'],
@@ -96,11 +98,15 @@ class ControladorIncidencia extends Controller
         }
     }
     protected function eliminarIncidencia(Request $request, $i){
+        $datos = Incidencia::find($i);
+        $this->authorize('view',$datos);
         $incidencia = Incidencia::findOrFail($i);
         $incidencia->delete();
         return back();
     }
     protected function consultar(Request $request, $i){
+        $datos = Incidencia::find($i);
+        $this->authorize('view',$datos);
         $incidencia = Incidencia::select('id', 'fecha', 'aula', 'hora', 'codigo_equipo', 'codigo_incidencia', 'informacion', 'archivo')->where('id', $i)->get();
         return view('consultar')->with('incidencia',$incidencia);
     }
@@ -112,7 +118,7 @@ class ControladorIncidencia extends Controller
     }   
     protected function actualizarAnadir(Request $request, $i){
         $validator=Validator::make($request->all(), [
-            'estado' => ['required'],
+            'estado' => ['required', 'integer','between:1,4'],
             'comentario' => ['required'],
         ],[
             'required' => 'El campo de :attribute es obligatorio.',
@@ -123,7 +129,15 @@ class ControladorIncidencia extends Controller
         }else{
 
             $incidencia = Incidencia::findOrFail($i);
-            $incidencia->estado = $request->estado;
+            if($request->input('estado') == '1'){
+                $incidencia->estado = "En proceso";
+            }else if($request->input('estado') == '2'){
+                $incidencia->estado = "Recibida";
+            }else if($request->input('estado') == '3'){
+                $incidencia->estado = "Resuelta";
+            }else if($request->input('estado') == '4'){
+                $incidencia->estado = "Rechazada";
+            }
             $incidencia->informacion = $request->comentario;
             
             $incidencia->update();

@@ -22,10 +22,10 @@
                         <form method="POST" enctype="multipart/form-data" action="/home-admin/anadir/{{$item->id}}/modificado">
                             @csrf
                             Estado de la incidencia: <select name="estado">
-                                <option value="En proceso">En proceso</option>
-                                <option value="Recibida">Recibida</option>
-                                <option value="Resuelta">Resuelta</option>
-                                <option value="Rechazada">Rechazada</option>
+                                <option value="1">En proceso</option>
+                                <option value="2">Recibida</option>
+                                <option value="3">Resuelta</option>
+                                <option value="4">Rechazada</option>
                             </select><br>
                             Comentario:
                             <br>
